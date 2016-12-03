@@ -1,25 +1,26 @@
-from pprint import pprint
-from clarifai.rest import ClarifaiApp
-import json
+from flask import Flask, render_template, url_for, redirect
+from utils import dbUtils
+import hashlib
 
-app = ClarifaiApp()
-url = raw_input("Pick a photo: ")
-files = [url]
-search = ["dinosaur"]
-d = app.tag_urls(files)
+app = Flask(__name__)
 
-for image in d["outputs"]:
-    dinosaur = False
-    tags = []
-    for concept in image["data"]["concepts"]:
-        if concept["name"].lower() in search:
-            dinosaur = True
-        else:
-            tags.append(concept["name"].lower())
-    if dinosaur:
-        print "DINOSAUR!!"
-    else:
-        print "NOT A DINOSAUR"
-        print tags
+@app.route('/')
+def index():
+    if "user" in session:
+        return redirect( url_for('login') )
+    return render_template("index.html")
+
+@app.route('/login')
 
 
+@app.route('/<username>')
+def user():
+    return render_template("user.html")
+
+@app.route('/kill')
+def kill():
+    return render_template("getKill.html")
+
+
+if __name__ == "__main__":
+    app.run()
