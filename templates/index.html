@@ -22,7 +22,10 @@
 	<nav>
 	  <ul>
 	    <li><a href="#intro">Welcome</a></li>
+        {% if logged_in %}
 	    <li><a href="#account">{{username}}'s account</a></li>
+        {% else %}
+        <li><a href="/login">Log In/Sign Up</a></li>
 	    <li><a href="#assignment">Your Assignment</a></li>
 	    <li><a href="#leaderboards">Leaderboards</a></li>
 	  </ul>
