@@ -1,5 +1,6 @@
 import sqlite3
 from pprint import pprint
+import os, binascii
 
 def getTables():
     if c != None:
@@ -16,13 +17,14 @@ def printTable(tableName):
 
 
 def setup():
-    if 'user' not in getTables():
+    if getTables() is not None and 'user' not in getTables():
         q = '''
         CREATE TABLE user (
         id INTEGER PRIMARY KEY,
         username VARCHAR(50) UNIQUE,
         password VARCHAR(50),
-        kills INTEGER
+        kills INTEGER,
+        qr VARCHAR(50) UNIQUE
         );
         '''
         c.execute(q)
@@ -92,22 +94,47 @@ def registerAuth(username, password, password_repeat):
     return 0
 
 
-def addUser(username, password, pic):
-    q = "INSERT INTO user(username, password, pfp) VALUES(?,?,?)"
-    c.execute(q, (username, password, pic))
+def addUser(username, password):
+    q = "INSERT INTO user(username, password) VALUES(?,?)"
+    c.execute(q, (username, password))
     conn.commit()
 
 
+def isInDB(*columns,**table):return True if c.execute("SELECT 1 FROM %s WHERE %s LIMIT 1;"%(table["table"]if table else"user",\
+reduce((lambda c1,c2:"(%s) AND (%s)"%("%s=\"%s\""%(columns[0][0],columns[0][1])if isinstance(c1,tuple)else c1,"%s=\"%s\""%(c2[0]\
+,c2[1]))),columns)if len(columns)-1 else"%s=\"%s\""%(columns[0][0],columns[0][1]))).fetchone() else False
+
+
+def getTarget(userid):
+    q = "SELECT target FROM user WHERE id=?"
+    targetid = int(c.execute(q, (userid,))[0])
+    return targetid
+
+def validKill(userID, victimQR):
+    pass
+
+def generateQR(userid):
+    qr = binascii.b2a_hex(os.urandom(15))
+    q = "REPLACE INTO user(id, target) VALUES "
+
+def assignTarget(userid):
+    q = "SELECT * FROM user WHERE id != ? LIMIT 1"
+    targetid = c.execute(q,(userid,))
+    
+    q = "INSERT INTO user(target) VALUES(?)"
+    c.execute(q, (targetid,))
+
 def oneTimeSetup():
     q = "INSERT INTO user(username, password) VALUES(\"top\",\"kek\");"
-    c.execute(q);
+    c.execute(q)
     q = "INSERT INTO user(username, password) VALUES(\"kop\",\"tech\");"
-    c.execute(q);
+    c.execute(q)
 
 
 def debug():
     print "\nPRINTING USER TABLE..."
     printTable("user")
+    printTable("kill")
 
 
 if __name__ == "__main__":
