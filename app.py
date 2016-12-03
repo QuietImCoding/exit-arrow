@@ -8,7 +8,7 @@ app = Flask(__name__)
 def index():
     if "user" in session:
         return redirect( url_for('login') )
-    return render_template("index.html")
+    return render_template("index.html", logged_in="user" in session)
 
 @app.route('/about')
 def about():
@@ -54,4 +54,5 @@ def kill():
 
 
 if __name__ == "__main__":
+    app.secret_key="DOGGO"
     app.run(debug=True)
