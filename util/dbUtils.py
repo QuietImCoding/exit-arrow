@@ -21,7 +21,18 @@ def setup():
         CREATE TABLE user (
         id INTEGER PRIMARY KEY,
         username VARCHAR(50) UNIQUE,
-        password VARCHAR(50)
+        password VARCHAR(50),
+        kills INTEGER,
+        );
+        '''
+        c.execute(q)
+        
+        q = '''
+        CREATE TABLE kill (
+        id INTEGER PRIMARY KEY,
+        killer_id INTEGER,
+        victim_id INTEGER,
+        ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         '''
         c.execute(q)
