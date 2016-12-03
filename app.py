@@ -19,7 +19,7 @@ def login():
     return render_template("login.html")
 
 @app.route('/<username>')
-def user():
+def user(username):
     return render_template("user.html")
 
 @app.route('/kill')
