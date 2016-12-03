@@ -24,9 +24,10 @@
 	    <li><a href="#intro">Welcome</a></li>
         {% if logged_in %}
 	    <li><a href="#account">{{username}}'s account</a></li>
+        <li><a href="#assignment">Your Assignment</a></li>
         {% else %}
-        <li><a href="/login">Log In/Sign Up</a></li>
-	    <li><a href="#assignment">Your Assignment</a></li>
+        <li><a href="/login">Log In / Sign Up</a></li>
+        {% endif %}
 	    <li><a href="#leaderboards">Leaderboards</a></li>
 	  </ul>
 	</nav>
@@ -73,6 +74,7 @@
 	</section>
       </section>
 
+      {% if logged_in %}
       <!-- Two -->
       <section id="assignment" class="wrapper style3 fade-up">
 	<div class="inner">
@@ -115,7 +117,8 @@
 	  </ul>
 	</div>
       </section>
-
+      {% endif %}
+      
       <!-- Three -->
       <section id="leaderboards" class="wrapper style1 fade-up">
 	<div class="inner">
