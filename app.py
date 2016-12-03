@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask, render_template, url_for, redirect, session
 from utils import dbUtils
 import hashlib
 
@@ -28,4 +28,4 @@ def kill():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
