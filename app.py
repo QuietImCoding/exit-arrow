@@ -19,7 +19,7 @@ def about():
 @app.route('/auth', methods=['GET','POST'])
 def auth():
     if request.method=="GET":
-        return render_template("auth.html")
+        return render_template("lag.html")
     else:
         if request.form.get("action") == "login":
             user = request.form["LIuname"]

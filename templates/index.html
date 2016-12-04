@@ -26,7 +26,7 @@
 	    <li><a href="#account">{{username}}'s account</a></li>
         <li><a href="#assignment">Your Assignment</a></li>
         {% else %}
-        <li><a href="/login">Log In / Sign Up</a></li>
+        <li><a href="/auth">Log In / Sign Up</a></li>
         {% endif %}
 	    <li><a href="#leaderboards">Leaderboards</a></li>
 	  </ul>
@@ -44,7 +44,7 @@
 	  <p>It's Qill or be Qilled. Scan the QR codes of your opponents to get points and climb to the top of the leaderboards.</p>
 	  <ul class="actions">
 	    {% if not signed_in %}
-	    <li><a href="/login" class="button scrolly">Sign Up / Log In</a></li>
+	    <li><a href="/auth" class="button scrolly">Sign Up / Log In</a></li>
 	    {% else %}
 	    <li><a href="#assignment" class="button scrolly">Your Assignment</a></li>
 	    {% endif %}
