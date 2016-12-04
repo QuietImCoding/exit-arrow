@@ -17,14 +17,15 @@ def printTable(tableName):
 
 
 def setup():
-    if getTables() is not None and 'user' not in getTables():
+    if 'user' not in getTables():
         q = '''
         CREATE TABLE user (
         id INTEGER PRIMARY KEY,
         username VARCHAR(50) UNIQUE,
         password VARCHAR(50),
-        kills INTEGER,
-        qr VARCHAR(50) UNIQUE
+        kills INTEGER DEFAULT 0,
+        qr VARCHAR(50) UNIQUE,
+        target_id INTEGER DEFAULT 0
         );
         '''
         c.execute(q)
@@ -94,44 +95,43 @@ def registerAuth(username, password, password_repeat):
     return 0
 
 
-def addUser(username, password):
-    q = "INSERT INTO user(username, password) VALUES(?,?)"
-    c.execute(q, (username, password))
-    conn.commit()
-
-
 def isInDB(*columns,**table):return True if c.execute("SELECT 1 FROM %s WHERE %s LIMIT 1;"%(table["table"]if table else"user",\
 reduce((lambda c1,c2:"(%s) AND (%s)"%("%s=\"%s\""%(columns[0][0],columns[0][1])if isinstance(c1,tuple)else c1,"%s=\"%s\""%(c2[0]\
 ,c2[1]))),columns)if len(columns)-1 else"%s=\"%s\""%(columns[0][0],columns[0][1]))).fetchone() else False
 
+def addUser(username, password):
+    q = "SELECT target_id FROM user ORDER BY RANDOM() LIMIT 1"
+    targetid = int(c.execute(q).fetchone()[0])
+    qr = binascii.b2a_hex(os.urandom(5))
+    q = "INSERT INTO user(username, password, target_id, qr) VALUES(?,?,?,?);"
+    c.execute(q, (username, password, targetid, qr))
+    conn.commit()
 
-def getTarget(userid):
-    q = "SELECT target FROM user WHERE id=?"
-    targetid = int(c.execute(q, (userid,))[0])
-    return targetid
 
-def validKill(userID, victimQR):
-    pass
+def getTargetID(userid):
+    q = "SELECT target_id FROM user WHERE id=? LIMIT 1"
+    x = c.execute(q, (userid,))
+    return int(x.fetchone()[0])
 
-def generateQR(userid):
-    qr = binascii.b2a_hex(os.urandom(15))
-    q = "REPLACE INTO user(id, target) VALUES "
+def getQR(userid):
+    q = "SELECT qr FROM user WHERE id=? LIMIT 1"
+    x = c.execute(q, (userid,)).fetchone()[0]
+    return x
 
-def assignTarget(userid):
-    q = "SELECT * FROM user WHERE id != ? LIMIT 1"
-    targetid = c.execute(q,(userid,))
-    
-    q = "INSERT INTO user(target) VALUES(?)"
-    c.execute(q, (targetid,))
+def validKill(userid, victimQR):
+    victimQR_real = getQR(getTargetID(userid))
+    print victimQR_real
+    return victimQR == victimQR_real
 
 def oneTimeSetup():
-    q = "INSERT INTO user(username, password) VALUES(\"top\",\"kek\");"
+    q = 'INSERT INTO user(username, password, target_id, qr) VALUES("top","kek",1,"f9y8e4uh4");'
     c.execute(q)
-    q = "INSERT INTO user(username, password) VALUES(\"kop\",\"tech\");"
-    c.execute(q)
-
+    addUser("cop", "tech")
 
 def debug():
+    print "\nTESTING USER..."
+    print validKill(2, 'f9y8e4uh4')
+
     print "\nPRINTING USER TABLE..."
     printTable("user")
     printTable("kill")
