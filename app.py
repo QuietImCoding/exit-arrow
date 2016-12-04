@@ -31,18 +31,18 @@ def auth():
                 session["user"] = user
                 return redirect(url_for("index"))
                 return render_template("auth.html", extra = "LOGIN INCORRECT")
-            else: #assert action == register
-                user = request.form["SUuname"]
-                pwd = request.form["SUpass"]
-                confirm = request.form["SUconfirm"]
-                if dbUtils.registerAuth(user, pwd, confirm) == 0:
-                    hashObj = hashlib.sha1()
-                    hashObj.update(pwd)
-                    pwd = hashObj.hexdigest()
-                    dbUtils.addUser(user, pwd, pic)
-                    session["user"] = user #store session                                               
-                    return redirect(url_for("index"))
-                return render_template("auth.html")
+        else: #assert action == register
+            user = request.form["SUuname"]
+            pwd = request.form["SUpass"]
+            confirm = request.form["SUconfirm"]
+            if dbUtils.registerAuth(user, pwd, confirm) == 0:
+                hashObj = hashlib.sha1()
+                hashObj.update(pwd)
+                pwd = hashObj.hexdigest()
+                dbUtils.addUser(user, pwd, pic)
+                session["user"] = user #store session                                               
+                return redirect(url_for("index"))
+            return render_template("auth.html")
 
 
 @app.route('/<username>')
